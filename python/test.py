@@ -63,3 +63,6 @@ system = attack_position_system(T=200000, c=0.2)
 
 for k, v in system.items():
     print(k, ":", v)
+
+# 1️⃣ 判断补仓（只在收盘后调用） -  ✅ 按「相对历史最高收盘价回撤」而不是 「当天收盘价回撤」
+# 2️⃣ 判断止盈（盘中或收盘都可以）

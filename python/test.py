@@ -14,19 +14,25 @@ def attack_position_system(T, c):
 
     assert 0 < c < 1, "现金占比 c 必须在 (0, 1) 之间"
 
-    # 1. 基础资金拆分
+    # 基础资金拆分
     cash = T * c
     position_init = T * (1 - c)
 
-    # 2. 回撤档位（相对最高点）
+    # 建仓计划
+    build_plan = {
+        "第一阶段": [
+            position_init * 0.25,
+            position_init * 0.25
+        ],
+        "第二阶段": [
+            position_init * 0.50
+        ]
+    }
+
+    # 补仓计划
     drawdown_levels = [0.05, 0.08, 0.12]
-
-    # 3. 补仓系数（总和 = 1）
     add_ratios = [0.25, 0.375, 0.375]
-
-    # 4. 补仓金额临时存放位置
     storage_location = ["现金", "黄金", "底仓"]
-
     add_plan = []
     for d, k, l in zip(drawdown_levels, add_ratios, storage_location):
         add_plan.append({
@@ -35,14 +41,14 @@ def attack_position_system(T, c):
             "存放位置": l
         })
 
-    # 4. 止盈档位（相对成本）
+    # 止盈计划
     take_profit_plan = [
         {"收益率": 0.25, "减仓比例": 0.30},
         {"收益率": 0.40, "减仓比例": 0.30},
         {"收益率": 0.60, "减仓比例": 0.40},
-    ]
+    ]    
 
-    # 5. 最大允许回撤（风控）
+    # 最大允许回撤（风控）
     max_drawdown = 1.5 * c
 
     return {
@@ -51,22 +57,78 @@ def attack_position_system(T, c):
         "建仓": position_init,
         "预留现金": cash,
 
-        # "drawdown_formula": "(H - P) / H",
-        # "profit_formula": "(V - C) / C",
-
+        "建仓计划": build_plan,
         "补仓计划": add_plan,
         "止盈计划": take_profit_plan,
 
         "最大回撤->建议清仓": max_drawdown
     }
+
+
+def base_position_allocation(T):
+    """
+    底仓初始买入计算器
+    以 011730 70% + 007029 30% 配置
+    
+    参数：
+        T : float
+            底仓总金额
+    
+    返回：
+        dict : 各基金初始买入金额
+    """
+    allocation = {
+        "011730 工银聚享混合C": T * 0.7,
+        "007029 中证500ETF": T * 0.3
+    }
+    return allocation
+
+
+def position_allocation(total_amount):
+    """
+    总资金按底仓/进攻仓比例分配
+    
+    参数：
+        total_amount : float
+            总资金金额
+    
+    返回：
+        dict : 底仓金额和进攻仓金额
+    """
+    base_ratio = 0.6   # 底仓占比
+    attack_ratio = 0.4 # 进攻仓占比
+
+    allocation = {
+        "底仓金额": total_amount * base_ratio,
+        "进攻仓金额": total_amount * attack_ratio
+    }
+    return allocation
+
+
 # 6成 底仓
-# 4成 进攻
-# T = 总资金
+# 4成 进攻仓
+total_money = 600000
+alloc = position_allocation(total_money)
+print("------------------------------------------")
+for k, v in alloc.items():
+    print(f"{k}: {v:.2f} 元")
+print("------------------------------------------\n")
+
+
+base_buy = base_position_allocation(T=4000)
+print("------------------------------------------")
+for fund, amount in base_buy.items():
+    print(f"{fund} 初始买入金额: {amount:.2f} 元")
+print("------------------------------------------\n")
+
+
+print("------------------------------------------")
+# T = 进攻仓总资金
 # c = 现金占比（进攻仓常用 0.20 ～ 0.30）
 system = attack_position_system(T=200000, c=0.2)
-
 for k, v in system.items():
     print(k, ":", v)
+print("------------------------------------------")
 
 # 1️⃣ 判断补仓（只在收盘后调用） -  ✅ 按「相对历史最高收盘价回撤」而不是 「当天收盘价回撤」
 #   补仓信号看昨日(T)收盘，T+1 若盘中震荡则当日补仓，若单边趋势则延后至 T+2 观察，每档补仓只执行一次。

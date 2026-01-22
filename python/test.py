@@ -24,11 +24,15 @@ def attack_position_system(T, c):
     # 3. 补仓系数（总和 = 1）
     add_ratios = [0.25, 0.375, 0.375]
 
+    # 4. 补仓金额临时存放位置
+    storage_location = ["现金", "黄金", "底仓"]
+
     add_plan = []
-    for d, k in zip(drawdown_levels, add_ratios):
+    for d, k, l in zip(drawdown_levels, add_ratios, storage_location):
         add_plan.append({
             "回撤": d,
-            "补仓金额": cash * k
+            "补仓金额": cash * k,
+            "存放位置": l
         })
 
     # 4. 止盈档位（相对成本）

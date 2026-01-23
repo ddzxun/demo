@@ -124,7 +124,7 @@ print("------------------------------------------\n")
 print("------------------------------------------")
 # T = 进攻仓总资金
 # c = 现金占比
-system = attack_position_system(T=200000, c=0.10)
+system = attack_position_system(T=3000, c=0.10)
 for k, v in system.items():
     print(k, ":", v)
 print("------------------------------------------")

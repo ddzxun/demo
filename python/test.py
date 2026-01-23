@@ -30,9 +30,9 @@ def attack_position_system(T, c):
     }
 
     # 补仓计划
-    drawdown_levels = [0.05, 0.08, 0.12]
-    add_ratios = [0.25, 0.375, 0.375]
-    storage_location = ["现金", "黄金", "底仓"]
+    drawdown_levels = [0.06, 0.12]
+    add_ratios = [0.4, 0.6]
+    storage_location = ["黄金", "底仓"]
     add_plan = []
     for d, k, l in zip(drawdown_levels, add_ratios, storage_location):
         add_plan.append({
@@ -43,13 +43,12 @@ def attack_position_system(T, c):
 
     # 止盈计划
     take_profit_plan = [
-        {"收益率": 0.25, "减仓比例": 0.30},
-        {"收益率": 0.40, "减仓比例": 0.30},
-        {"收益率": 0.60, "减仓比例": 0.40},
+        {"收益率": 0.30, "减仓比例": 0.55},
+        {"收益率": 0.45, "减仓比例": 0.45},
     ]    
 
     # 最大允许回撤（风控）
-    max_drawdown = 1.5 * c
+    max_drawdown = min(0.25, 1.5 * c)
 
     return {
         "total_capital": T,
@@ -124,8 +123,8 @@ print("------------------------------------------\n")
 
 print("------------------------------------------")
 # T = 进攻仓总资金
-# c = 现金占比（进攻仓常用 0.20 ～ 0.30）
-system = attack_position_system(T=200000, c=0.2)
+# c = 现金占比
+system = attack_position_system(T=200000, c=0.10)
 for k, v in system.items():
     print(k, ":", v)
 print("------------------------------------------")

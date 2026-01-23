@@ -21,13 +21,40 @@ def attack_position_system(T, c):
     # 建仓计划
     build_plan = {
         "第一阶段": [
-            position_init * 0.25,
-            position_init * 0.25
+            position_init * 0.30,
+            position_init * 0.30
         ],
         "第二阶段": [
-            position_init * 0.50
+            position_init * 0.40
         ]
     }
+    build_execution_conditions = '''
+        第二笔建仓
+            ✅ 执行条件（必须满足）：
+                价格站上第一笔建仓成本
+                出现一次明确回踩不破（缩量回调）
+                指数/板块同步走稳
+                
+                简单点：
+                    如果第一笔是赚的（哪怕只赚 1%） → 可以考虑第二笔
+                    如果第一笔是亏的 → 第二笔坚决不买
+        第三笔建仓
+            ✅ 执行条件（非常严格）：
+                整体仓位已浮盈 ≥ 5%
+                出现放量突破（前高 / 平台）
+                市场情绪开始转暖（但未疯狂）
+
+                简单点：
+                    第一、第二笔 合计已经赚 ≥ 5%
+                    最近 1–2 周，净值整体是向上的
+                    中间没有大跌（没有 -3% 以上的单日下跌）
+                    
+            ❌ 以下情况，坚决不执行 40% 建仓：
+                第二笔建完后立刻回撤
+                横盘超过 10–15 个交易日
+                成交量逐日萎缩
+                指数进入明显下行趋势
+    '''
 
     # 补仓计划
     drawdown_levels = [0.06, 0.12]
@@ -57,6 +84,7 @@ def attack_position_system(T, c):
         "预留现金": cash,
 
         "建仓计划": build_plan,
+        "建仓执行条件" : build_execution_conditions,
         "补仓计划": add_plan,
         "止盈计划": take_profit_plan,
 
@@ -106,7 +134,7 @@ def position_allocation(total_amount):
 
 # 6成 底仓
 # 4成 进攻仓
-total_money = 600000
+total_money = 4000
 alloc = position_allocation(total_money)
 print("------------------------------------------")
 for k, v in alloc.items():
@@ -114,7 +142,7 @@ for k, v in alloc.items():
 print("------------------------------------------\n")
 
 
-base_buy = base_position_allocation(T=4000)
+base_buy = base_position_allocation(T=2400.00)
 print("------------------------------------------")
 for fund, amount in base_buy.items():
     print(f"{fund} 初始买入金额: {amount:.2f} 元")
@@ -124,7 +152,7 @@ print("------------------------------------------\n")
 print("------------------------------------------")
 # T = 进攻仓总资金
 # c = 现金占比
-system = attack_position_system(T=3000, c=0.10)
+system = attack_position_system(T=1600.00, c=0.10)
 for k, v in system.items():
     print(k, ":", v)
 print("------------------------------------------")

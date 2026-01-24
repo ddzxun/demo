@@ -134,6 +134,7 @@ def position_allocation(total_amount):
     }
     return allocation
 
+print("原则：所有基金操作（建仓、加仓、止盈、止损、抄底）都应基于 T 日收盘价判断，而不是盘中价格。\n")
 
 # 6成 底仓
 # 4成 进攻仓

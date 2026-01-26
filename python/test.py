@@ -12,7 +12,6 @@ def attack_position_system(T, c):
         dict : 进攻仓完整制度
     """
 
-    assert 0 < c < 1, "现金占比 c 必须在 (0, 1) 之间"
 
     # 基础资金拆分
     cash = T * c
@@ -21,11 +20,12 @@ def attack_position_system(T, c):
     # 建仓计划
     build_plan = {
         "第一阶段": [
-            position_init * 0.30,
+            position_init * 0.25,
             position_init * 0.30
         ],
         "第二阶段": [
-            position_init * 0.40
+            position_init * 0.25,
+            position_init * 0.20
         ]
     }
     build_execution_conditions = '''
@@ -156,7 +156,7 @@ print("------------------------------------------\n")
 print("------------------------------------------")
 # T = 进攻仓总资金
 # c = 现金占比
-system = attack_position_system(T=1600.00, c=0.10)
+system = attack_position_system(T=4000000.00, c=0)
 for k, v in system.items():
     print(k, ":", v)
 print("------------------------------------------")

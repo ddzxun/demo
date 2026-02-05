@@ -98,7 +98,6 @@ def attack_position_system(T, c):
 def base_position_allocation(T):
     """
     底仓初始买入计算器
-    以 011730 70% + 007029 30% 配置
     
     参数：
         T : float
@@ -108,8 +107,10 @@ def base_position_allocation(T):
         dict : 各基金初始买入金额
     """
     allocation = {
-        "011730 工银聚享混合C": T * 0.7,
-        "007029 中证500ETF": T * 0.3
+        "011730 工银聚享混合C": T * 0.3,
+        "007029 中证500ETF": T * 0.3,
+        "002963 易方达黄金ETF": T * 0.3,
+        "谁更优": T * 0.1
     }
     return allocation
 
@@ -146,7 +147,7 @@ for k, v in alloc.items():
 print("------------------------------------------\n")
 
 
-base_buy = base_position_allocation(T=2400.00)
+base_buy = base_position_allocation(T=10000.00)
 print("------------------------------------------")
 for fund, amount in base_buy.items():
     print(f"{fund} 初始买入金额: {amount:.2f} 元")

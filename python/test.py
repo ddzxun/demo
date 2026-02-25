@@ -109,8 +109,8 @@ def base_position_allocation(T):
     allocation = {
         "011730 工银聚享混合C": T * 0.3,
         "007029 中证500ETF": T * 0.3,
-        "002963 易方达黄金ETF": T * 0.3,
-        "谁更优": T * 0.1
+        "002963 易方达黄金ETF": T * 0.4,
+        # "谁更优": T * 0.1
     }
     return allocation
 
@@ -133,21 +133,21 @@ def position_allocation(total_amount):
         "底仓金额": total_amount * base_ratio,
         "进攻仓金额": total_amount * attack_ratio
     }
-    return allocation
+    return allocation, total_amount * base_ratio, total_amount * attack_ratio
 
 print("原则：所有基金操作（建仓、加仓、止盈、止损、抄底）都应基于 T 日收盘价判断，而不是盘中价格。\n")
 
 # 6成 底仓
 # 4成 进攻仓
-total_money = 4000
-alloc = position_allocation(total_money)
+total_money = 5000
+alloc, base_amount, attack_amount = position_allocation(total_money)
 print("------------------------------------------")
 for k, v in alloc.items():
     print(f"{k}: {v:.2f} 元")
 print("------------------------------------------\n")
 
 
-base_buy = base_position_allocation(T=10000.00)
+base_buy = base_position_allocation(T=base_amount)
 print("------------------------------------------")
 for fund, amount in base_buy.items():
     print(f"{fund} 初始买入金额: {amount:.2f} 元")
@@ -157,7 +157,7 @@ print("------------------------------------------\n")
 print("------------------------------------------")
 # T = 进攻仓总资金
 # c = 现金占比
-system = attack_position_system(T=4000000.00, c=0)
+system = attack_position_system(T=attack_amount, c=0)
 for k, v in system.items():
     print(k, ":", v)
 print("------------------------------------------")
